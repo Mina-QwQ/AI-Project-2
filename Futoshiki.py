@@ -66,16 +66,22 @@ def initialize(filename):
 
     return block_board
 
+def Futoshiki(board):
+    index = find_next(board)
+    if index is True:
+        return board
+    board[index[0]][index[1]].val = min(board[i][j].domain) # what if not consistent
+    board[index[0]][index[1]].domain = []
+    add_constraints(board[index[0]][index[1]])
+    board = Futoshiki(board)
+    # TODO: find a way to rewind if not consistent
+    
 
 filename = input("Filename: ")
 board = initialize(filename)
-index = find_next(board)
-while index is not True:
-    board[index[0]][index[1]].val = min(board[i][j].domain)
-    board[index[0]][index[1]].domain = []
-    index = find_next(board)
+output = Futoshiki(board)
 
-# TODO: output is in board, put into output file
+# TODO: put into output file
     
                 
     
