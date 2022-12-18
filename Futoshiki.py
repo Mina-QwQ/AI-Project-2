@@ -7,6 +7,9 @@ class block():
         self.constraints = [] # > < ^ v constraints + values it can't be
         self.domain = [i for i in range(1,6)] #values it can be 
 
+#revises the initial domain given any present number in row or col
+#sig: block_board 2D array of block Objects, int number to restrain, int row i, int row j
+#returns nothing. Revised board in place
 def add_constraint(block_board, val, i, j):
     for k in range(5):
         if val not in block_board[k][j].constraints:
@@ -18,12 +21,17 @@ def add_constraint(block_board, val, i, j):
         if val in block_board[i][k].domain:
             block_board[i][k].domain.remove(val)
 
+#removes values from list parameter and given indices
+#sig: board 2D array of block Objects, int row i, int row j, list of int values to remove
+#returns nothing. Revised board in place
 def remove_values(board, i, j, values):
     for value in values:
         if value in board[i][j].domain:
             board[i][j].domain.remove(value)
             
-
+#adds inequalities as initial constraints
+#sig: board 2D array of block Objects, int row i, int row j
+#returns nothing. Revised board in place
 def add_inequality_constraint(board, i, j):
     #if string type exists in constraint of board[i][j]?
     for c in board[i][j].constraints:
@@ -52,6 +60,9 @@ def add_inequality_constraint(board, i, j):
             values_to_remove = [_ for _ in range(board[i-1][j].val+1, 6)]
             remove_values(board, i, j, values_to_remove)
 
+#checks the consistency of board value with its inequality constraints
+#sig: board 2D array of block Objects, value to check, int row i, int row j
+#returns False if inconsistent, True if consistent
 def check_consistency(board, val, row, col): 
     for i in range(len(board)):
         if board[row][i].val == val and i != col:
@@ -86,6 +97,10 @@ def check_consistency(board, val, row, col):
                 return False
     return True 
 
+#finds the next block to edit on the board by using MRV and degree heuristic
+#chooses first block by row then col if there are same MRV and degree
+#sig: board 2D array of block Objects
+#returns indices of the next block to edit, or True if board is complete
 def find_next(block_board):
     #check minimum remaining value heuristic 
     min_domain = 6
@@ -111,7 +126,10 @@ def find_next(block_board):
             val = mrv[i]
             max_constraints = len(block_board[mrv[i][0]][mrv[i][1]].constraints)
     return val
-            
+
+#initializes and reads in board from given input file
+#sig: string filename
+#returns board with block units       
 def initialize(filename):
     f = open(filename, 'r')
     board = [f.readline().strip('\n').strip(' ').split(' ') for _ in range(5)]
@@ -158,6 +176,9 @@ def initialize(filename):
             add_inequality_constraint(block_board, i, j)
     return block_board
 
+#runs the Futoshiki algorithm on the board recursively
+#sig: board 2D array of block Objects
+#returns a complete and consistent board 
 def Futoshiki(board):
     index = find_next(board)
     if index is True:
