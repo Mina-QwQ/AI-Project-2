@@ -202,7 +202,7 @@ filename = input("Filename: ")
 board = initialize(filename)
 output = Futoshiki(board)
 
-f = open("Output"+filename[5], 'w')
+f = open("Output"+filename[5]+".txt", 'w')
 for i in range(len(board)):
     for j in range(len(board)):
         f.write(str(board[i][j].val) + ' ')
